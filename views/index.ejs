@@ -1,13 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" ng-app>
+<html lang="en" ng-app="RUN" ng-controller="AppController">
 	<head>
 	    <meta charset="utf-8">
-	    <title><%= title %></title>
+	    <link rel="stylesheet" href="/css/bootstrap.css">
+	   	<link rel="stylesheet" href="/css/app.css">
+	    <link rel="stylesheet" href="/css/responsive.css">
+	    
 	    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.min.js"></script>
-	    <link rel="stylesheet" href="css/bootstrap.min.css">
-	   	<link rel="stylesheet" href="css/app.css">
-	    <link rel="stylesheet" href="css/bootstrap-min.min.css">
-	    <script src="lib/angular/angular.js"></script>
+	    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
+	    <script src="/socket.io/socket.io.js"></script>
+	    <script src="/js/ng-app.js"></script>
+	    <script src="/js/ng-controllers.js"></script>
+	    <script src="/js/ng-directives.js"></script>
+	    <script src="/js/ng-factories.js"></script>
+	    <script src="/js/ng-filters.js"></script>
+	    <script src="/js/bootstrap.min.js"></script>
+
+	    <title><%= title %>{{pagetitle}}</title>
 	</head>
 	<body>
 	    <div class="navbar navbar-inverse navbar-fixed-top">
@@ -18,19 +28,22 @@
 	            <span class="icon-bar"></span>
 	            <span class="icon-bar"></span>
 	          </button>
-	          <a class="brand" href="#"><%= title %></a>
+	          <a class="brand" href="/"><%= title %></a>
 	          <div class="nav-collapse collapse">
 	            <ul class="nav">
 	              <li class="active"><a href="/">Home</a></li>
-	              <li><a href="#about">About</a></li>
-	              <li><a href="#contact">Contact</a></li>
+	              <li><a href="/create">Create A Run</a></li>
 	            </ul>
 	          </div><!--/.nav-collapse -->
 	        </div>
 	      </div>
 	    </div>
 	    <div class="container">
-	      <div ng-view> <!-- ANGULAR VIEW -->
+	    	<div class="container-inner">
+	    		<div class="container-inner-inner">
+		      		<div ng-view> <!-- ANGULAR VIEW -->
+		      	</div>
+		    </div>
 	    </div> <!-- /container -->
 	    <footer class="container">
 	    	HI!

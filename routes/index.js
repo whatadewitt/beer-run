@@ -4,7 +4,7 @@ var api = require('./api');
  */
 
 exports.index = function(req, res){
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: 'Garrison Booze Hound' });
 };
 
 exports.api = api;
