@@ -1,4 +1,4 @@
-var api = require('./routes/api');
+var api = require('./api');
 /*
  * GET home page.
  */

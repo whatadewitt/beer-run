@@ -16,7 +16,6 @@ module.exports = function(app) {
     },
     function(accessToken, refreshToken, profile, done) {
       client.set('User: ' + profile.id, JSON.stringify(profile), function(err, response) {
-
         if (err) {
           done(err);
         } else {

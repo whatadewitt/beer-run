@@ -6,11 +6,9 @@ var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
-  , path = require('path')
-  , runstore = require('./runstore');
+  , path = require('path');
 
-var app = express(),
-  storage = new runstore();
+var app = express();
 
 
 app.configure(function(){
@@ -32,14 +30,16 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
+app.post('/api/createRun', routes.api.createRun);
+app.del('/api/finishRun/:id', routes.api.finishRun);
+app.put('/api/addItem/:id', routes.api.addItem);
+app.post('/api/gotItem/:id', routes.api.gotItem);
 
 //Catch all route
 app.get('*', routes.index);
 
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
-
-  console.log(storage.createRun('26640527'));
 });
 
 var io = require('socket.io').listen(server);
