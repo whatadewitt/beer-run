@@ -42,7 +42,7 @@ module.exports = function(app) {
     });
   });
 
-  app.get('/auth/facebook', passport.authenticate('facebook'));
+  app.get('/auth/facebook', passport.authenticate('facebook', { 'publish_actions' }));
 
   app.get('/auth/facebook/callback', passport.authenticate('facebook', 
     { successRedirect: '/createRun', failureRedirect: '/fail' })
