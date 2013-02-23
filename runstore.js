@@ -5,7 +5,6 @@ var redis = require("redis"),
 	
 var RunStore = function() {
 	redis_cli = redis.createClient();
-	redis_cli.flushall();
 }
 
 RunStore.prototype.createRun = function(params, callback) {
