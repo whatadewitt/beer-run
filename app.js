@@ -6,7 +6,9 @@ var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  , request = require('request')
+  , cheerio = require('cheerio');
 
 var app = express();
 
@@ -19,10 +21,10 @@ app.configure(function(){
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.static(path.join(__dirname, 'public')));  
+  app.use(express.static(path.join(__dirname, 'public')));
   app.use(express.cookieParser('supersecret'));
-  app.use(express.session());  
-  app.use(app.router); 
+  app.use(express.session());
+  app.use(app.router);
 });
 
 app.configure('development', function(){
@@ -31,6 +33,28 @@ app.configure('development', function(){
 
 app.get('/', routes.index);
 app.get('/users', user.list);
+app.get('/api/pricelist', function(req, res){
+  var pricelist = Object();
+      pricelist.products = new Array();
+  request('http://www.mynslc.com/Pages/advancedSearch.aspx?k=garrison', function(err, resp, body){
+    $ = cheerio.load(body);
+    console.log('Got Data Back From NSLC: '+$('title').html());
+    $('div#products-list ul li').each(function(i, ul){
+      var product = new Object();
+          product.title = $('.details h5 a', this).html();
+          product.image = 'http://www.mynslc.com'+$('.image img', this).attr('src');
+          product.price = $('.desc h6', this).html();
+          product.unitSize  = $('.details p', this).eq(2).html();
+          console.log(product.title);
+          console.log(product.image);
+          console.log(product.price);
+          console.log(product.unitSize);
+          console.log('-------------------');
+      pricelist.products.push(product);
+    });
+    res.end(JSON.stringify(pricelist));
+  });
+});
 app.get('*', routes.index);
 
 var server = http.createServer(app).listen(app.get('port'), function(){

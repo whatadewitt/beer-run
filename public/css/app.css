@@ -31,9 +31,7 @@ body {
   padding: 7px 9px;
 }
 .container-inner {
-  background-color: #FFF;
-  padding: 0px 10px 10px 10px;
-}
-.container-inner-inner {
-  margin-top: 10px;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 10px;
+  border-radius: 3px;
 }
