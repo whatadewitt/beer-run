@@ -7,9 +7,11 @@ var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  , runstore = require('./runstore');
 
-var app = express();
+var app = express(),
+  storage = new runstore();
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -35,4 +37,6 @@ app.get('/users', user.list);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
+
+  console.log(storage.createRun('26640527'));
 });

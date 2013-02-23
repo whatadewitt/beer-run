@@ -11,6 +11,8 @@
     "less-middleware": "*",
     "redis": "~0.8.2",
     "socket.io": "~0.9.13",
-    "passport": "~0.1.15"
+    "passport": "~0.1.15",
+    "node-uuid": "~1.4.0",
+    "async": "~0.2.5"
   }
 }
