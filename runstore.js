@@ -8,12 +8,14 @@ var RunStore = function() {
 }
 
 RunStore.prototype.createRun = function(params, callback) {
+	var self = this;
+	
 	if (params.override === true) {
 		this.initRun(params, callback);
 	} else {
 		redis_cli.get(params.fb_id + ':run', function(e, run) {
 			if (null == run) {
-				initRun(params, callback);
+				self.initRun(params, callback);
 			} else {
 				callback(run);
 			}
@@ -163,7 +165,7 @@ RunStore.prototype.storePricelist = function(data, callback) {
 		} else {
 			callback(true);
 		}
-	}
+	});
 }
 
 module.exports = RunStore;
