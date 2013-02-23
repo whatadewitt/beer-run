@@ -3,6 +3,8 @@ module.exports = (function() {
     var request = require('request');
     var runStore = new require('../../runstore');
     var cheerio = require('cheerio');
+    var redis = require('redis');
+    var client = redis.createClient();
 
     function getPricelist(req, res) {
       runStore.getPricelist({
@@ -47,6 +49,7 @@ module.exports = (function() {
 
     function createRun(req, res) {
       var runId;
+      var fbFriends = require('../../FBFriends');
 
       runStore.createRun({
         fb_id: req.user.id,
@@ -58,14 +61,23 @@ module.exports = (function() {
             message: err
           }, 400);
         } else {
-          res.send({
-            code: 200,
-            message: 'Run successfully created.',
-            data: {
-              //facebook data
-            },
-            runId: runId
-          }, 200);
+          client.get('User: ' + req.user.id + ':AccessToken', function(err, accessToken) {
+            if (accessToken) {
+              fbFriends({
+                accessToken: accessToken,
+                fb_id: req.user.id
+              }, function(err, friendsList) {
+                res.send({
+                  code: 200,
+                  message: 'Run successfully created.',
+                  data: {
+                    friends: friendsList
+                  },
+                  runId: runId
+                }, 200);
+              });
+            }
+          });
         }
       });
     }

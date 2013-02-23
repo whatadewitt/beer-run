@@ -15,7 +15,6 @@ module.exports = function(app) {
     callbackURL: "http://localhost:3000/auth/facebook/callback"
   },
   function(accessToken, refreshToken, profile, done) {
-    console.log('Access Token: ' + accessToken);
     client.set('User: ' + profile.id, JSON.stringify(profile), function(err, response) {
       if (err) {
         done(err);
@@ -45,7 +44,7 @@ module.exports = function(app) {
   app.get('/auth/facebook', passport.authenticate('facebook'));
 
   app.get('/auth/facebook/callback', passport.authenticate('facebook', 
-    { successRedirect: '/createRun', failureRedirect: '/fail' })
+    { successRedirect: '/create', failureRedirect: '/' })
   );
 
   app.get('/logout', function(req, res) {
