@@ -40,28 +40,7 @@ app.post('/api/createRun', routes.api.createRun);
 app.del('/api/finishRun/:id', routes.api.finishRun);
 app.put('/api/addItem/:id', routes.api.addItem);
 app.post('/api/gotItem/:id', routes.api.gotItem);
-app.get('/api/pricelist', function(req, res){
-  var pricelist = Object();
-      pricelist.products = new Array();
-  request('http://www.mynslc.com/Pages/advancedSearch.aspx?k=garrison', function(err, resp, body){
-    $ = cheerio.load(body);
-    console.log('Got Data Back From NSLC: '+$('title').html());
-    $('div#products-list ul li').each(function(i, ul){
-      var product = new Object();
-          product.title = $('.details h5 a', this).html();
-          product.image = 'http://www.mynslc.com'+$('.image img', this).attr('src');
-          product.price = $('.desc h6', this).html();
-          product.unitSize  = $('.details p', this).eq(2).html();
-          console.log(product.title);
-          console.log(product.image);
-          console.log(product.price);
-          console.log(product.unitSize);
-          console.log('-------------------');
-      pricelist.products.push(product);
-    });
-    res.end(JSON.stringify(pricelist));
-  });
-});
+app.get('/api/pricelist', routes.api.priceList);
 //Catch all route
 app.get('*', routes.index);
 
