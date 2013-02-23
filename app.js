@@ -30,7 +30,8 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
-app.get('/users', user.list);
+
+//Catch all route
 app.get('*', routes.index);
 
 var server = http.createServer(app).listen(app.get('port'), function(){
