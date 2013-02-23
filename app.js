@@ -4,12 +4,10 @@
 
 var express = require('express')
   , routes = require('./routes')
-  , user = require('./routes/user')
   , http = require('http')
   , passport = require('passport')
   , path = require('path')
-  , request = require('request')
-  , cheerio = require('cheerio');
+  , request = require('request');
 
 var app = express();
 

@@ -2,6 +2,7 @@ module.exports = (function() {
     var async = require('async');
     var request = require('request');
     var runStore = new require('../../runstore');
+    var cheerio = require('cheerio');
 
     function getPricelist(req, res) {
       runStore.getPricelist({
