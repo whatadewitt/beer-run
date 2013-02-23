@@ -5,57 +5,130 @@ var redis = require("redis"),
 	
 var RunStore = function() {
 	redis_cli = redis.createClient();
+	redis_cli.flushall();
 }
 
-RunStore.prototype.createRun = function(params) {
+RunStore.prototype.createRun = function(params, callback) {
 	var rid = uuid.v1();
 	rid = rid.substring(4, 4) + rid.substring(27);
-	redis_cli.setex(params.fb_id + ':run', 3600 * 4, rid); // expire in 4 hours
-	redis_cli.setex(rid + ':order:next_id', 3600 * 4, 0); // expire in 4 hours
-	
-	return rid;
+	var m = redis_cli.multi();
+	m.set(params.fb_id + ':run', rid); // expire in 4 hours
+	m.set(rid + ':order:next_id', 0); // expire in 4 hours (IF TIME)
+	m.exec(function(err, res) {
+		if (
+			res[0] == "OK"
+			&& res[1] == "OK"
+			) {
+			callback(rid);
+		}
+	});
 }
 
 RunStore.prototype.finishRun = function(params, callback) {
-	redis_cli.get(redis_cli.del(params.fb_id + ':run'), function(e, r_id) {
-		redis_cli.del(params.fb_id + ':run', function(e, r) {
-			if (e) { 
-				callback(e);
-			} else {
-				var orders = redis_cli.smembers(r_id + ':order', function(e, r) {
-					if (e) {
-						callback(e);
-					} else {
-						async.each(orders, function(order) {
-							redis_cli.srem(order);
-						}, function() {
-							callback(null, true);
-						});
-					}
+	var self = this;
+
+	redis_cli.smembers(params.r_id + ':order', function(e, members) {
+		// gives me each facebook user who has added an order to the run
+		async.each(members, function(member, o_callback) {
+			redis_cli.smembers(params.r_id + ':order:' + member, function(e, ids) {
+				async.each(ids, function(id, i_callback) {
+					// gives me each order id in the run
+					var m = redis_cli.multi();
+					m.del(params.r_id + ':order:' + member + ':' + id + ':got');
+					m.del(params.r_id + ':order:' + member + ':' + id);
+					m.exec(function(err, res) {
+						if (
+							res[0] == 1
+							&& res[1] == 1
+							) {
+							i_callback();
+						}
+					});
+				}, function(e) {
+					redis_cli.del(params.r_id + ':order:' + member, function(e, r) {
+						o_callback();
+					});
 				});
-			}
+			});
+		}, function(e) {
+			// each user callback
+
+			var m = redis_cli.multi();
+			// remove next id
+			m.del(params.r_id + ':order:next_id');
+			// remove order
+			m.del(params.r_id + ':order');
+			// remove run
+			m.del(params.fb_id + ':run');
+
+			m.exec(function(err, res) {
+				if (
+					res[0] == 1
+					&& res[1] == 1
+					&& res[2] == 1
+					) {
+					
+					console.log('goddamn');
+					callback(1);	
+				}
+			});
 		});
 	});
 }
 
-RunStore.prototype.addItem = function(params, data, callback) {
-	data.id = redis_cli.get(r_id + ':order:next_id', function() {
-		redis_cli.sadd(r_id + ':order', params.fb_id);
-		redis_cli.set(r_id + ':order:' + params.fb_id, JSON.stringify(data));
-		redis_cli.incr(r_id + ':order:next_id');
+RunStore.prototype.addItemToRun = function(params, data, callback) {
+	var m = redis_cli.multi();
+		m.sadd(params.r_id + ':order:' + params.fb_id, data.id);
+		m.set(params.r_id + ':order:' + params.fb_id + ':' + data.id, JSON.stringify(data));
+		m.set(params.r_id + ':order:' + params.fb_id + ':' + data.id + ':got' , 0);
+	
+	m.exec(function(err, res) {
+		if (
+			res[0] == 1
+			&& res[1] == "OK"
+			&& res[2] == "OK"
+			) { // pour jamie <3
+		  	redis_cli.incr(params.r_id + ':order:next_id', function(e, r) { 
+				if (e) {
+					callback(e);
+				} else {
+					callback(data.id);
+				}
+			});	
+		}
+	});
+}
 
-		callback(data.id);
+RunStore.prototype.addItem = function(params, data, callback) {
+	var self = this;
+	redis_cli.get(params.r_id + ':order:next_id', function(e, id) {
+		if (e) {
+			callback(e);
+		} else {
+			data.id = id;
+			redis_cli.sismember(params.r_id + ':order', params.fb_id, function(e, isMember) {
+				if (!isMember) {
+					redis_cli.sadd(params.r_id + ':order', params.fb_id, self.addItemToRun(params, data, callback));
+				} else {
+					self.addItemToRun(params, data, callback);
+				}
+			});
+		}
 	});
 }
 
 RunStore.prototype.gotItem = function(params, callback) {
-	redis_cli.get(r_id + ':order:' + params.fb_id, function(e, order) {
+	redis_cli.smembers(params.r_id + ':order:' + params.fb_id, function(e, order) {
 		if (e) {
 			callback(e);
 		} else {
-			order.status = 1;
-
-			callback(null, order);
+			redis_cli.set(params.r_id + ':order:' + params.fb_id + ':' + params.item_id + ':got', 1, function(e, r) {
+				if (e) {
+					callback(e);
+				} else {
+					callback(1);
+				}
+			});
 		}
 	});
 }
