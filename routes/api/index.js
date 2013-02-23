@@ -90,15 +90,35 @@ module.exports = (function() {
     }
 
     function addItem(req, res) {
-      async.each(req.body.items)
-
-      runStore.addItem({
-        r_id: req.params.id
-      })
+      async.eachSeries(req.body.items, function(item, callback) {
+        runStore.addItem({
+          r_id: req.params.id,
+          fb_id: req.user.id
+        }, 
+        item, 
+        function(params) {
+          callback();
+        });
+      }, function() {
+        res.send({
+          code: 200,
+          message: 'Item(s) have been added!'
+        }, 200);
+      });
     } 
 
     function gotItem(req, res) {
-      
+      runStore.gotItem({
+        fb_id: req.user.id,
+        r_id: req.params.id,
+        item_id: req.body.item_id,
+        status: req.body.status
+      }, function() {
+        res.send({
+          code: 200,
+          message: 'Item(s) have been added!'
+        }, 200);
+      });
     }
 
     return {

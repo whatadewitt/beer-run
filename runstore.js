@@ -9,7 +9,7 @@ var RunStore = function() {
 
 RunStore.prototype.createRun = function(params, callback) {
 	var self = this;
-	
+
 	if (params.override === true) {
 		this.initRun(params, callback);
 	} else {
@@ -137,7 +137,7 @@ RunStore.prototype.gotItem = function(params, callback) {
 		if (e) {
 			callback(e);
 		} else {
-			redis_cli.set(params.r_id + ':order:' + params.fb_id + ':' + params.item_id + ':got', 1, function(e, r) {
+			redis_cli.set(params.r_id + ':order:' + params.fb_id + ':' + params.item_id + ':got', params:status, function(e, r) {
 				if (e) {
 					callback(e);
 				} else {
