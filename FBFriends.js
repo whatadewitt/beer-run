@@ -12,9 +12,11 @@ module.exports = function(params, done) {
     if (err) {
       done(err);
     } else {
-      async.each(body.data, getfriends, function(err)) {
+      async.each(body.data, getFriends, function(err)) {
         if (err) {
           done(err);
+        } else {
+          done(null, friendsList);
         }
       };
     }
@@ -22,16 +24,13 @@ module.exports = function(params, done) {
   });
 
   function getFriends (friend, callback) {
-    request('http://graph.facebook.com/'+friend.id+'?fields=name,picture', function(err, response, body)) {
+    request('http://graph.facebook.com/'+friend.id+'?fields=name,picture', function(err, response, body) {
       if (err) {
         callback(err);
       } else {
         friendsList.push(body);
-        callback(null, friendsList);
+        callback(null);
       }
     }
   }
-
-
-  module.exports = friendsList;
 }

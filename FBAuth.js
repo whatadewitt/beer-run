@@ -15,7 +15,6 @@ module.exports = function(app) {
     callbackURL: "http://localhost:3000/auth/facebook/callback"
   },
   function(accessToken, refreshToken, profile, done) {
-    console.log('Access Token: ' + accessToken);
     client.set('User: ' + profile.id, JSON.stringify(profile), function(err, response) {
       if (err) {
         done(err);
