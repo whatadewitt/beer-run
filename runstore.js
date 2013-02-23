@@ -8,6 +8,20 @@ var RunStore = function() {
 }
 
 RunStore.prototype.createRun = function(params, callback) {
+	if (params.override === true) {
+		this.initRun(params, callback);
+	} else {
+		redis_cli.get(params.fb_id + ':run', function(e, run) {
+			if (null == run) {
+				initRun(params, callback);
+			} else {
+				callback(run);
+			}
+		});
+	}
+}
+
+RunStore.prototype.initRun = function(params, callback) {
 	var rid = uuid.v1();
 	rid = rid.substring(4, 4) + rid.substring(27);
 	var m = redis_cli.multi();
@@ -143,7 +157,7 @@ RunStore.prototype.getPricelist = function(params, callback) {
 }
 
 RunStore.prototype.storePricelist = function(data, callback) {
-	redis_cli.set('garrison:pricelist', JSON.stringify(params.data), function(e, r) {
+	redis_cli.setex('garrison:pricelist', 3600 * 24, JSON.stringify(params.data), function(e, r) {
 		if (e) {
 			callback(false);
 		} else {
