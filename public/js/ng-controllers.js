@@ -9,6 +9,11 @@ RUN.controller(
 		};
 
 		$http.get('/api/pricelist/').success(function(data) {
+			$.each(data.products, function(index, item) {
+				data.products[index].qty = 1;
+				data.products[index].price = Number(data.products[index].price.replace('$',''));
+				data.products[index].itemSubtotal = data.products[index].qty*data.products[index].price;
+			});
 			$scope.pricelist = data;
 		});
 
@@ -34,7 +39,7 @@ RUN.controller(
 		$scope.setPageTitle('Create A Run');
 
 		$scope.inviteFriends = function(){
-			//https://www.facebook.com/dialog/send?app_id=**app_id**&to=**friend_id**&picture=**imageurl**&link=**yoursitelink**&redirect_uri="+redirect_uri
+			
 		};
 	}
 );

@@ -3,14 +3,40 @@
 <div class="row">
 	<div class="span4 offset2">
 	    <ul id="sourceList" dnd-between-list="pricelist.products,targetList">
-	        <li class="alert alert-error nomargin"
-	            ng-repeat="item in pricelist.products">{{item.title}}</li>
+	        <li class="alert alert-error nomargin" ng-repeat="item in pricelist.products">
+	        	<h5>{{item.title}}</h5>
+	        	<table>
+	        		<tr>
+	        			<td valign="top">
+	        				<img ng-src="{{item.image}}" class="img-polaroid" width="75" style="width:75px;" />
+	        			</td>
+	        			<td valign="top" style="padding-left:10px;">
+							<b>Unit Size: </b>{{item.unitSize}}<br/>
+							<b>Price: </b>${{item.price}}
+						<td>
+					</tr>
+				</table>
+	       	</li>
 	    </ul>
 	</div>
 	<div class="span4">
 	    <ul id="targetList" dnd-between-list="order,sourceList">
-	        <li class="alert alert-info nomargin"
-	            ng-repeat="item in order">{{item.title}}</li>
+	        <li class="alert alert-info nomargin" ng-repeat="item in order">
+	        	<h5>{{item.title}}</h5>
+	        	<table>
+	        		<tr>
+	        			<td valign="top">
+	        				<img ng-src="{{item.image}}" class="img-polaroid" width="75" style="width:75px;" />
+	        			</td>
+	        			<td valign="top" style="padding-left:10px;">
+							<b>Unit Size: </b>{{item.unitSize}}<br/>
+							<b>Price: </b>${{item.price}}<br/>
+							Qty: <input name="item.qty" ng-change="update()" ng-model="item.qty" style="width:50px; text-align:right;" /><br/>
+							<b>Item Subtotal: </b>{{item.price*item.qty}}
+						<td>
+					</tr>
+				</table>
+	        </li>
 	    </ul>
 	</div>
 </div>
