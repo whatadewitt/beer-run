@@ -12,6 +12,8 @@ module.exports = function(params, done) {
  async.each(body, sendfbPost, function(err)) {
    if (err) {
      done(err);
+   } else {
+     done(null, 'All messages sent');
    }
  };
 
