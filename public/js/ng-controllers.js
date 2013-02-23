@@ -3,13 +3,17 @@ RUN.controller(
 	function( $scope, $http, socket ) {
 		$scope.pagetitle = '';
 		$scope.runOrder = [];
-		$scope.availableItems = [];
+		$scope.pricelist = [];
 		$scope.setPageTitle = function(val){
 			$scope.pagetitle = ' | ' + val;
 		};
+
+		$http.get('/api/pricelist/').success(function(data) {
+			$scope.pricelist = data;
+		});
+
 		$scope.socket = io.connect('http://localhost:3000');
 		$scope.socket.on('news', function (data) {
-			console.log(data);
 			socket.emit('my other event', { my: 'data' });
 		});
 	}
@@ -39,5 +43,6 @@ RUN.controller(
 	"OrderController",
 	function( $scope, $http ) {
 		$scope.setPageTitle('Make An Order');
+		$scope.order = [];
 	}
 );

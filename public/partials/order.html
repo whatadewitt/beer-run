@@ -1,9 +1,16 @@
 <h2>Make And Order</h2>
+
 <div class="row">
-    <div class="span4 offset4">
-        <ul id="single" dnd-list="availableItems">
-            <li class="alert alert-info nomargin"
-                ng-repeat="item in availableItems">{{item.value}}</li>
-        </ul>
-    </div>
+	<div class="span4 offset2">
+	    <ul id="sourceList" dnd-between-list="pricelist.products,targetList">
+	        <li class="alert alert-error nomargin"
+	            ng-repeat="item in pricelist.products">{{item.title}}</li>
+	    </ul>
+	</div>
+	<div class="span4">
+	    <ul id="targetList" dnd-between-list="order,sourceList">
+	        <li class="alert alert-info nomargin"
+	            ng-repeat="item in order">{{item.title}}</li>
+	    </ul>
+	</div>
 </div>
