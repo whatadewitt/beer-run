@@ -132,4 +132,24 @@ RunStore.prototype.gotItem = function(params, callback) {
 	});
 }
 
+RunStore.prototype.getPricelist = function(params, callback) {
+	redis_cli.get(params.vendor + ':pricelist', function(e, prices) {
+		if (e) {
+			callback(true);
+		} else {
+			callback(null, JSON.parse(prices));
+		}
+	});
+}
+
+RunStore.prototype.storePricelist = function(data, callback) {
+	redis_cli.set('garrison:pricelist', JSON.stringify(params.data), function(e, r) {
+		if (e) {
+			callback(false);
+		} else {
+			callback(true);
+		}
+	}
+}
+
 module.exports = RunStore;
