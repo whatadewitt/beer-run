@@ -29,6 +29,8 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
+require('./FBAuth')(app);
+
 app.get('/', routes.index);
 app.post('/api/createRun', routes.api.createRun);
 app.del('/api/finishRun/:id', routes.api.finishRun);
