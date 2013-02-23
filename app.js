@@ -6,6 +6,7 @@ var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
+  , passport = require('passport')
   , path = require('path');
 
 var app = express();
@@ -21,7 +22,9 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(express.static(path.join(__dirname, 'public')));  
   app.use(express.cookieParser('supersecret'));
-  app.use(express.session());  
+  app.use(express.session());
+  app.use(passport.initialize());
+  app.use(passport.session());
   app.use(app.router); 
 });
 
