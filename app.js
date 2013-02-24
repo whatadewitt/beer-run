@@ -7,6 +7,7 @@ var express = require('express')
   , http = require('http')
   , passport = require('passport')
   , path = require('path')
+  , RedisStore = require('connect-redis')(express)
   , request = require('request');
 
 var app = express();
@@ -21,7 +22,20 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(express.static(path.join(__dirname, 'public')));
   app.use(express.cookieParser('supersecret'));
-  app.use(express.session());
+
+  app.use(express.session({
+    key: 'sid',
+    store: new RedisStore({
+      host: 'localhost',
+      port: 6379
+    }),
+    cookie: {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      path: '/'
+    },
+    secret: 'teehee'
+  }));
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(app.router); 
@@ -34,9 +48,10 @@ app.configure('development', function(){
 require('./FBAuth')(app);
 
 app.get('/', routes.index);
-app.post('/api/createRun', routes.api.createRun);
-app.del('/api/finishRun/:id', routes.api.finishRun);
-app.put('/api/addItem/:id', routes.api.addItem);
+app.post('/api/messageFriends/:id', routes.api.messageFriends);
+app.get('/api/createRun', routes.api.createRun);
+app.post('/api/finishRun/:id', routes.api.finishRun);
+app.post('/api/addItem/:id', routes.api.addItem);
 app.post('/api/gotItem/:id', routes.api.gotItem);
 app.get('/api/pricelist', routes.api.priceList);
 //Catch all route

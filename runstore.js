@@ -17,7 +17,7 @@ RunStore.prototype.createRun = function(params, callback) {
 			if (null == run) {
 				self.initRun(params, callback);
 			} else {
-				callback(run);
+				callback(null, run);
 			}
 		});
 	}
@@ -34,7 +34,7 @@ RunStore.prototype.initRun = function(params, callback) {
 			res[0] == "OK"
 			&& res[1] == "OK"
 			) {
-			callback(rid);
+			callback(null, rid);
 		}
 	});
 }
@@ -137,7 +137,7 @@ RunStore.prototype.gotItem = function(params, callback) {
 		if (e) {
 			callback(e);
 		} else {
-			redis_cli.set(params.r_id + ':order:' + params.fb_id + ':' + params.item_id + ':got', params:status, function(e, r) {
+			redis_cli.set(params.r_id + ':order:' + params.fb_id + ':' + params.item_id + ':got', params.status, function(e, r) {
 				if (e) {
 					callback(e);
 				} else {

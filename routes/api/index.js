@@ -1,7 +1,8 @@
 module.exports = (function() {
     var async = require('async');
     var request = require('request');
-    var runStore = new require('../../runstore');
+    var runstore = require('../../runstore');
+    var runStore = new runstore();
     var cheerio = require('cheerio');
     var redis = require('redis');
     var client = redis.createClient();
@@ -50,7 +51,6 @@ module.exports = (function() {
     function createRun(req, res) {
       var runId;
       var fbFriends = require('../../FBFriends');
-
       runStore.createRun({
         fb_id: req.user.id,
         overwrite: req.body.force // should be set in request.body
@@ -61,7 +61,7 @@ module.exports = (function() {
             message: err
           }, 400);
         } else {
-          client.get('User: ' + req.user.id + ':AccessToken', function(err, accessToken) {
+          client.get('User:' + req.user.id + ':AccessToken', function(err, accessToken) {
             if (accessToken) {
               fbFriends({
                 accessToken: accessToken,
@@ -133,7 +133,33 @@ module.exports = (function() {
       });
     }
 
+    function messageFriends(req, res) {
+      var fbMessage = require('../../FBMessage');
+      client.get('User:' + req.user.id + ':AccessToken', function(err, accessToken) {
+        if (accessToken) {
+          fbMessage({
+            accessToken: accessToken,
+            r_id: req.params.id,
+            friendList: req.body.friendList
+          }, function(err, message) {
+            if (err) {
+              res.send({
+                code: 400,
+                message: err
+              }, 400);
+            } else {
+              res.send({
+                code: 200,
+                message: message
+              });
+            }
+          });
+        }
+      });
+    }
+
     return {
+        messageFriends: messageFriends,
         priceList: getPricelist,
         createRun: createRun,
         finishRun: finishRun,

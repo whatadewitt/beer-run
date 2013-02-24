@@ -1,19 +1,20 @@
-//params is an object which contains array of friend objects (friendList) of user and access token (accessToken)
+//params is an object which contains array of friend objects (friendList) of user and access token (accessToken) and runId (r_id)
 module.exports = function(params, done) {
   'use strict';
 
- var FB = require('fb');
- var request = require('request');
+  var FB = require('fb');
+  var request = require('request');
 
- FB.setAccessToken(params.accessToken);
+  FB.setAccessToken(params.accessToken);
 
- var body = 'Making a beer run, what do you want? <a href="http://localhost:3000/create">Click here to place order</a>';
+  var body = 'Making a beer run, what do you want? <a href="http://localhost:3000/' + params.r_id + '/order">Click here to place order</a>';
 
- async.each(body, sendfbPost, function(err)) {
-   if (err) {
-     done(err);
-   } else {
-     done(null, 'All messages sent');
+
+  async.each(params.friendList, sendfbPost, function(err)) {
+    if (err) {
+      done(err);
+    } else {
+      done(null, 'All messages sent');
    }
  };
 
@@ -23,5 +24,4 @@ module.exports = function(params, done) {
       callback(err);
     }
   }
-  
 }

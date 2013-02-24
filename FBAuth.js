@@ -15,12 +15,15 @@ module.exports = function(app) {
     callbackURL: "http://localhost:3000/auth/facebook/callback"
   },
   function(accessToken, refreshToken, profile, done) {
-    client.set('User: ' + profile.id, JSON.stringify(profile), function(err, response) {
+    client.set('User:' + profile.id, JSON.stringify(profile), function(err, response) {
       if (err) {
         done(err);
       } else {
-        client.set('User: ' + profile.id + ':AccessToken', accessToken, function(err, response) {
+        console.log('am i here?')
+        client.set('User:' + profile.id + ':AccessToken', accessToken, function(err, response) {
+          console.log('yep.');
           if (err) {
+            console.log("Error: " + err);
             done(err);
           } else {
             return done(null, profile.id);  
@@ -36,12 +39,12 @@ module.exports = function(app) {
   });
 
   passport.deserializeUser(function(id, done) {
-    client.get('User: ' + id, function(err, reply) {
-      done(null, reply);
+    client.get('User:' + id, function(err, reply) {
+      done(null, JSON.parse(reply));
     });
   });
 
-  app.get('/auth/facebook', passport.authenticate('facebook', { 'publish_actions' }));
+  app.get('/auth/facebook', passport.authenticate('facebook', { scope: 'publish_actions' }));
 
   app.get('/auth/facebook/callback', passport.authenticate('facebook', 
     { successRedirect: '/create', failureRedirect: '/' })

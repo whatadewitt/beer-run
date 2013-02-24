@@ -4,23 +4,21 @@ module.exports = function(params, done) {
 
   var friendsList = new Array();
   var request = require("request");
-  var FB = require("fb");
+  var async = require("async");
 
-  FB.setAccessToken(params.accessToken);
-
-  request('http://graph.facebook.com/'+params.fb_id+'/friends', function(err, response, body){
+  request('http://graph.facebook.com/'+params.fb_id+'/friends?access_token='+params.accessToken, function(err, response, body) {
+    console.log(body);
     if (err) {
       done(err);
     } else {
-      async.each(body.data, getFriends, function(err)) {
+      async.each(body.data, getFriends, function(err, data) {
         if (err) {
           done(err);
         } else {
           done(null, friendsList);
         }
-      };
+      });
     }
-
   });
 
   function getFriends (friend, callback) {
@@ -31,6 +29,6 @@ module.exports = function(params, done) {
         friendsList.push(body);
         callback(null);
       }
-    }
+    });
   }
 }
