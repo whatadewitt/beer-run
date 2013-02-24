@@ -6,12 +6,11 @@ module.exports = function(params, done) {
   var request = require("request");
   var async = require("async");
 
-  request('http://graph.facebook.com/'+params.fb_id+'/friends?access_token='+params.accessToken, function(err, response, body) {
-    console.log(body);
+  request('https://graph.facebook.com/'+params.fb_id+'/friends?access_token='+params.accessToken, function(err, response, body) {
     if (err) {
       done(err);
     } else {
-      async.each(body.data, getFriends, function(err, data) {
+      async.each(JSON.parse(body).data, getFriends, function(err, data) {
         if (err) {
           done(err);
         } else {
