@@ -1,6 +1,12 @@
 <form>
 	<fieldset>
         <legend>Set up your Beer Run</legend>
-
+        <span ng-show="runId" ng-model="runId">You have just created run ID {{runId}}</span>
+        <ul>
+            <li ng-repeat="friend in friends">
+                {{friend.name}}
+                <img style="width:75px;" ng-src="{{friend.picture.data.url}}" />
+            </li>
+        </ul>
     </fieldset>
 </form>

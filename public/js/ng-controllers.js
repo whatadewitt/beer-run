@@ -2,9 +2,10 @@ RUN.controller(
 	"AppController",
 	function( $scope, $http, socket ) {
 		$scope.pagetitle = '';
-		$scope.runID = '';
+		$scope.runId = '';
 		$scope.runOrder = [];
 		$scope.pricelist = [];
+        $scope.friends = [];
 		$scope.setPageTitle = function(val){
 			$scope.pagetitle = ' | ' + val;
 		};
@@ -35,6 +36,18 @@ RUN.controller(
 	function( $scope, $http ) {
 		//console.log('Create An New Run');
 		$scope.setPageTitle('Create A Run');
+
+        $http({
+            method: 'POST',
+            url: '/api/createRun',
+            data: $scope.order,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function(data) {
+            $scope.runId = data.runId;
+            $scope.friends = data.data.friends;
+            console.log($scope.friends);
+        });
+
 
 		$scope.inviteFriends = function(){
 			

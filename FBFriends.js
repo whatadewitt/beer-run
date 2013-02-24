@@ -25,7 +25,7 @@ module.exports = function(params, done) {
       if (err) {
         callback(err);
       } else {
-        friendsList.push(body);
+        friendsList.push(JSON.parse(body));
         callback(null);
       }
     });

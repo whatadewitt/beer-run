@@ -49,7 +49,7 @@ require('./FBAuth')(app);
 
 app.get('/', routes.index);
 app.post('/api/messageFriends/:id', routes.api.messageFriends);
-app.get('/api/createRun', routes.api.createRun);
+app.post('/api/createRun', routes.api.createRun);
 app.post('/api/finishRun/:id', routes.api.finishRun);
 app.post('/api/addItem/:id', routes.api.addItem);
 app.post('/api/gotItem/:id', routes.api.gotItem);
