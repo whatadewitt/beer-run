@@ -1,9 +1,10 @@
-<h2>Make And Order</h2>
+<h2>Submit Your Order - Just Drag And Drop!</h2>
 
 <div class="row">
 	<div class="span4 offset2">
+		<h3>Products Available</h3>
 	    <ul id="sourceList" dnd-between-list="pricelist.products,targetList">
-	        <li class="alert alert-error nomargin" ng-repeat="item in pricelist.products">
+	        <li class="alert alert-error nomargin" ng-repeat="item in pricelist.products" ng-mouseleave="updateOrder()" ng-mouseover="updateOrder()" ng-click="updateOrder()">
 	        	<h5>{{item.title}}</h5>
 	        	<table>
 	        		<tr>
@@ -20,8 +21,10 @@
 	    </ul>
 	</div>
 	<div class="span4">
-	    <ul id="targetList" dnd-between-list="order,sourceList">
-	        <li class="alert alert-info nomargin" ng-repeat="item in order">
+		<h3>My Order</h3>
+		<form ng-submit="submitOrder()">
+	    <ul id="targetList" dnd-between-list="order.items,sourceList">
+	        <li class="alert alert-info nomargin" ng-repeat="item in order.items" ng-mouseleave="updateOrder()" ng-mouseover="updateOrder()" ng-click="updateOrder()">
 	        	<h5>{{item.title}}</h5>
 	        	<table>
 	        		<tr>
@@ -31,12 +34,14 @@
 	        			<td valign="top" style="padding-left:10px;">
 							<b>Unit Size: </b>{{item.unitSize}}<br/>
 							<b>Price: </b>${{item.price}}<br/>
-							Qty: <input name="item.qty" ng-change="update()" ng-model="item.qty" style="width:50px; text-align:right;" /><br/>
-							<b>Item Subtotal: </b>{{item.price*item.qty}}
+							Qty: <input name="item.qty" ng-change="updateOrder()" ng-model="item.qty" style="width:50px; text-align:right;" required/><br/>
+							<b>Item Subtotal: </b>{{item.subtotal | currency}}
 						<td>
 					</tr>
 				</table>
 	        </li>
 	    </ul>
+	    <div style="float:right;"><b>Subtotal: </b>{{order.subtotal | currency}}</div><br/>
+	    <button style="float:right;" class="btn btn-primary" type="submit">Submit</button></form>
 	</div>
 </div>

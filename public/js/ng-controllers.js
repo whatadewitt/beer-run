@@ -2,6 +2,7 @@ RUN.controller(
 	"AppController",
 	function( $scope, $http, socket ) {
 		$scope.pagetitle = '';
+		$scope.runID = '';
 		$scope.runOrder = [];
 		$scope.pricelist = [];
 		$scope.setPageTitle = function(val){
@@ -12,15 +13,12 @@ RUN.controller(
 			$.each(data.products, function(index, item) {
 				data.products[index].qty = 1;
 				data.products[index].price = Number(data.products[index].price.replace('$',''));
-				data.products[index].itemSubtotal = data.products[index].qty*data.products[index].price;
+				data.products[index].subtotal = data.products[index].qty*data.products[index].price;
 			});
 			$scope.pricelist = data;
 		});
 
 		$scope.socket = io.connect('http://localhost:3000');
-		$scope.socket.on('news', function (data) {
-			socket.emit('my other event', { my: 'data' });
-		});
 	}
 );
 
@@ -45,9 +43,47 @@ RUN.controller(
 );
 
 RUN.controller(
+	"ViewRunController",
+	function( $scope, $http, $routeParams ) {
+		//console.log('Create An New Run');
+		$scope.runId = $routeParams.runID;
+		$scope.setPageTitle('Viewing A Run');
+
+		$scope.socket.on('newItem', function (data) {
+			alert('NEW ITEM');
+		});
+	}
+);
+
+RUN.controller(
 	"OrderController",
-	function( $scope, $http ) {
+	function( $scope, $http, $routeParams ) {
+		$scope.runId = $routeParams.runID;
 		$scope.setPageTitle('Make An Order');
 		$scope.order = [];
+		$scope.order.items = [];
+		$scope.order.subtotal = 0;
+
+		$scope.updateOrder = function(){
+			var st = 0;
+			$.each($scope.order.items, function(index, item) {
+				$scope.order.items[index].subtotal = $scope.order.items[index].price*$scope.order.items[index].qty;
+				st += $scope.order.items[index].subtotal;
+			});
+			$scope.order.subtotal = st;
+		};
+
+		$scope.submitOrder = function(){
+			if($scope.order.items.length !== 0){
+				$http({
+					method: 'POST',
+					url: '/api/addItem/'+$scope.runId,
+					data: $scope.order,
+					headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+				});
+			} else {
+				alert('Nothing To Order.  GO HOME, YOU\'RE DRUNK.');
+			}
+		};
 	}
 );

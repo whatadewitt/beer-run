@@ -11,11 +11,16 @@
     "redis": "~0.8.2",
     "socket.io": "~0.9.13",
     "passport": "~0.1.15",
+    "node-uuid": "~1.4.0",
+    "async": "~0.2.5",
     "grunt": "~0.4.0",
     "grunt-contrib-jshint": "~0.1.1",
     "grunt-contrib-less": "~0.5.0",
     "grunt-contrib-watch": "~0.2.0",
+    "passport-facebook": "~0.1.5",
     "cheerio": "~0.10.7",
-    "request": "~2.14.0"
+    "request": "~2.14.0",
+    "fb": "~0.1.0",
+    "connect-redis": "~1.4.5"
   }
 }
